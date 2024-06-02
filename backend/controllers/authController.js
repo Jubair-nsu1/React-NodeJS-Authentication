@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
+// const bcrypt = require("bcrypt");
+const bcrypt = require('bcryptjs')
 const User = require('../models/user.model')
 
 const generateToken = (id) => {
@@ -15,8 +16,7 @@ const registerUser = async (req, res) => {
     const userExists = await User.findOne({ email })
   
     if (userExists) {
-      res.status(400)
-      throw new Error('User already exists')
+      return res.status(400).json({ error: "Username already exists." });
     }
   
     // Hash password
@@ -39,8 +39,7 @@ const registerUser = async (req, res) => {
       })
     } 
     else {
-      res.status(400)
-      throw new Error('Invalid user data')
+      return res.status(400).json({ error: "Invalid user data" });
     }
 }
 
@@ -51,6 +50,7 @@ const loginUser = async (req, res) => {
   
     if (!user) {
         return res.status(400).send("Invalid email");
+        //return { status: 'error', error: 'Invalid login' }
     }
   
     const isPasswordValid = await bcrypt.compare(password , user.password);

@@ -23,8 +23,8 @@ app.listen(PORT, (err) => {
 });
 
 //Database Connection
-// const connectDB = require("./config/db");
-// connectDB();
+const connectDB = require("./config/db");
+connectDB();
 
  
 // Use CORS middleware to allow requests from the frontend
@@ -40,6 +40,6 @@ app.use(express.json());
 
 
 //Call all Routes
-//app.use("/api/auth", authRoutes); //All the routes defined in auth.js will be prefixed with /api/auth
+app.use("/api/auth", authRoutes); //All the routes defined in auth.js will be prefixed with /api/auth
 
 

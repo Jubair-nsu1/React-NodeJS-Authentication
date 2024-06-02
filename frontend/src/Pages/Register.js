@@ -1,8 +1,8 @@
 import React, { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
 
 const Register = () => {
 
-  const [valid, setValid]     = useState(false);
 
   const [input, setInput] = useState({
     username: '',
@@ -10,105 +10,63 @@ const Register = () => {
     confirmPassword: ''
   });
  
-  const [error, setError] = useState({
-    username: '',
-    password: '',
-    confirmPassword: ''
-  })
- 
   const onInputChange = e => {
     const { name, value } = e.target;
     setInput(prev => ({
       ...prev,
       [name]: value
     }));
-    validateInput(e);
-  }
- 
-  const validateInput = e => {
-    setValid(true);
-    let { name, value } = e.target;
-    setError(prev => {
-      const stateObj = { ...prev, [name]: "" };
- 
-      switch (name) {
-        case "fullname":
-          if (!value) {
-            stateObj[name] = "Please enter Full Name.";
-            setValid(false);
-          }
-          
-          break;
-
-        case "email":
-          const emailRegex = /^[A-Z0-9._%+-]+@bylc.org$/i;
-          if (!value) {
-            stateObj[name] = "Please enter Email.";
-            setValid(false);
-          }
-          else if (!emailRegex.test(value)) {
-            stateObj[name] = 'Please enter your valid BYLC email';
-            setValid(false);
-          } 
-
-          break;  
- 
-        case "password":
-          if (!value) {
-            stateObj[name] = "Please enter Password.";
-          } else if (input.confirmPassword && value !== input.confirmPassword) {
-            stateObj["confirmPassword"] = "Password and Confirm Password does not match.";
-          } else {
-            stateObj["confirmPassword"] = input.confirmPassword ? "" : error.confirmPassword;
-          }
-          setValid(false);
-          break;
- 
-        case "confirmPassword":
-          if (!value) {
-            stateObj[name] = "Please enter Confirm Password.";
-          } else if (input.password && value !== input.password) {
-            stateObj[name] = "Password and Confirm Password does not match.";
-          }
-          setValid(false);
-          break;
- 
-        default:
-          break;
-      }
-      
-      
-      return stateObj;
-    });
   }
 
+  const [error, setError]     = useState(null);
+  const [message, setMessage] = useState("");
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if(valid) {  
 
-      console.log("Fullname: "+input.fullname);
-      console.log("Email: "+input.email);
-      console.log("Password: "+input.password);
-      console.log("Cpassword: "+input.confirmPassword);
+    if(input.password != input.confirmPassword) {
+      setError('Passwords dont match!')
+    }
+    else if(input.fullname == null || input.email==null|| input.password==null || input.confirmPassword==null ){
+      setError('Enter all fields*')
+    } 
+    else{ 
 
-        // const response  = await fetch('http://localhost:1337/api/register', {
-        //   method:'POST',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //   },
-        //   body: JSON.stringify({
-        //     email,
-        //     fullname,
-        //     password
-        //   }),
-        // })
-        // const data = await response.json()
-        // console.log(data);
+      let fullname = input.fullname;
+      let email = input.email;
+      let password = input.password;
+
+      try {
+        const response  = await fetch('http://localhost:4000/api/auth/register', {
+          method:'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            fullname,
+            email,
+            password
+          }),
+        })
+
+        const data = await response.json() 
+        if (data) {
+          if (data.error) {
+            setMessage(data.error);
+          } 
+          else {
+            setMessage("Account Created!");
+          }
+        }
+
+      } 
+      catch (error) {
+        console.log(error)
+      }
     
     }
-  }
 
+  }
 
 
 // https://www.cluemediator.com/password-and-confirm-password-validation-in-react
@@ -118,30 +76,29 @@ const Register = () => {
         <h1>Register User</h1><br/><br/>
         <div class="container-sm border shadow">
 
+          {/* Error Statement */}
+          <span style={{color:'red',fontWeight:'bold'}}>{error}</span>
+
           <form onSubmit={handleSubmit}>
               <div class="form-row mt-3">
                 <div class="col mb-2">
-                    <input type="text" class="form-control" placeholder="fullname" name="fullname" value={input.fullname} onChange={onInputChange} onBlur={validateInput}></input>
-                    {error.fullname && <span style={{color:'red'}}>{error.fullname}</span>}
+                    <input type="text" class="form-control" placeholder="fullname" name="fullname" value={input.fullname} onChange={onInputChange} ></input>
                 </div>
                 <div class="col mb-2">
-                    <input type="email" class="form-control" placeholder="Email" name="email" value={input.email} onChange={onInputChange} onBlur={validateInput}></input>
-                    {error.email && <span style={{color:'red'}}>{error.email}</span>}
+                    <input type="email" class="form-control" placeholder="Email" name="email" value={input.email} onChange={onInputChange} ></input>
                 </div>
                 <div class="col mb-2">
-                    <input type="password" class="form-control" placeholder="Password" name="password" value={input.password} onChange={onInputChange} onBlur={validateInput}></input>
-                    {error.password && <span style={{color:'red'}}>{error.password}</span>}
+                    <input type="password" class="form-control" placeholder="Password" name="password" value={input.password} onChange={onInputChange} ></input>    
                 </div>
                 <div class="col mb-2">
-                    <input type="password" class="form-control" placeholder="Password" name="confirmPassword" value={input.confirmPassword} onChange={onInputChange} onBlur={validateInput} ></input>
-                    {error.confirmPassword && <span style={{color:'red'}}>{error.confirmPassword}</span>}
+                    <input type="password" class="form-control" placeholder="Repeat Password" name="confirmPassword" value={input.confirmPassword} onChange={onInputChange} ></input>                   
                 </div>
                 <div class="d-grid gap-2 col-6 mx-auto mb-3 mt-5">                                       
                     <button style={{fontWeight:'bold'}} class="btn btn-success btn" type="submit">&nbsp;&nbsp; Sign Up</button>                                       
                 </div>
               </div>
           </form>
-
+          {message && <span style={{color:'blue',fontWeight:'bold'}}>{message}</span>}
         </div>
     </div>
   )

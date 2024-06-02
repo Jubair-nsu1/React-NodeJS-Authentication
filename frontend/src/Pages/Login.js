@@ -1,6 +1,16 @@
-import React,{useState} from 'react'
+import React, { useState, useEffect } from "react";
+import { useCookies } from "react-cookie";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const [cookies] = useCookies([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (cookies.jwt) {
+      navigate("/dashboard");
+    }
+  }, [cookies, navigate]);
 
   const [input, setInput] = useState({
     username: '',

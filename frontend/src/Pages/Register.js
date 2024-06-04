@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
 
@@ -96,6 +96,9 @@ const Register = () => {
                 <div class="d-grid gap-2 col-6 mx-auto mb-3 mt-5">                                       
                     <button style={{fontWeight:'bold'}} class="btn btn-success btn" type="submit">&nbsp;&nbsp; Sign Up</button>                                       
                 </div>
+                <span>
+                  Already have an account? <Link to="/login"> Login </Link>
+                </span>
               </div>
           </form>
           {message && <span style={{color:'blue',fontWeight:'bold'}}>{message}</span>}

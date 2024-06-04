@@ -13,7 +13,7 @@ const Login = () => {
   }, [cookies, navigate]);
 
   const [input, setInput] = useState({
-    username: '',
+    email: '',
     password: '',
   });
  
@@ -25,8 +25,47 @@ const Login = () => {
     }));
   }
 
+  const [error, setError]     = useState(null);
+
   async function handleSubmit(e) {
     e.preventDefault();
+
+    if(input.email==null|| input.password==null ){
+      setError('Enter all fields*')
+    } 
+    else{ 
+
+      let email = input.email;
+      let password = input.password;
+
+      try {
+        const response  = await fetch('http://localhost:4000/api/auth/login', {
+          method:'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email,
+            password
+          }),
+        })
+
+        const data = await response.json() 
+        if (data) {
+          if (data.error) {
+            setError(data.error);
+          } 
+          else {
+            //Go to Dashboard
+          }
+        }
+        
+      } 
+      catch (error) {
+        console.log(error)
+      }
+    
+    }
   
   }
 
@@ -35,6 +74,9 @@ const Login = () => {
 
       <h1>Login User</h1><br/><br/>
         <div class="container-sm border shadow">
+
+        {/* Error Statement */}
+        <span style={{color:'red',fontWeight:'bold'}}>{error}</span>
 
           <form onSubmit={handleSubmit}>
               <div class="form-row mt-3">
@@ -47,6 +89,9 @@ const Login = () => {
                 <div class="d-grid gap-2 col-6 mx-auto mb-3 mt-5">                                       
                     <button style={{fontWeight:'bold'}} class="btn btn-success btn" type="submit">&nbsp;&nbsp; Login</button>                                       
                 </div>
+                <span>
+                  Don't have an account ?<Link to="/register"> Register </Link>
+                </span>
               </div>
           </form>
 

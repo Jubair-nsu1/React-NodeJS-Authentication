@@ -43,6 +43,7 @@ const registerUser = async (req, res) => {
     }
 }
 
+
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
     console.log(req.body)
@@ -50,13 +51,13 @@ const loginUser = async (req, res) => {
     const user = await User.findOne({ email });
   
     if (!user) {
-        return res.status(400).send("Invalid email");
+        return res.status(400).json({ error: "Invalid email" });
     }
   
     const isPasswordValid = await bcrypt.compare(password , user.password);
   
     if (!isPasswordValid){
-        return res.status(400).send("Invalid password.");
+        return res.status(400).json({ error: "Invalid password" });
     }
         
     const token = jwt.sign({ userId: user.id , email: user.email}, 'secret123');

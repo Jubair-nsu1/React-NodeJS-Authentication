@@ -24,17 +24,24 @@ const Register = () => {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    if(input.password != input.confirmPassword) {
+    let fullname = input.fullname;
+    let email = input.email;
+    let password = input.password;
+    let confirmPassword = input.confirmPassword;
+
+    if(password != confirmPassword) {
       setError('Passwords dont match!')
     }
-    else if(input.fullname == null || input.email==null|| input.password==null || input.confirmPassword==null ){
+    else if(fullname == null || email==null|| password==null || confirmPassword==null ){
       setError('Enter all fields*')
     } 
     else{ 
 
-      let fullname = input.fullname;
-      let email = input.email;
-      let password = input.password;
+      const userData = {
+        fullname,
+        email,
+        password,
+      }
 
       try {
         const response  = await fetch('http://localhost:4000/api/auth/register', {
@@ -42,11 +49,7 @@ const Register = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            fullname,
-            email,
-            password
-          }),
+          body: JSON.stringify({ userData}),
         })
 
         const data = await response.json() 

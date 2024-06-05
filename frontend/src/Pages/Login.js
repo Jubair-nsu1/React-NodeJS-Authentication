@@ -29,25 +29,37 @@ const Login = () => {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    let email = input.email;
+    let password = input.password;
 
-    if(input.email==null|| input.password==null ){
-      setError('Enter all fields*')
-    } 
-    else{ 
+    if(!email && !password){
+      setError("Please enter your email and password")
+      return
+    }
+    else if(!email){
+        setError("Please enter your email")
+        return
+    }
+    else if(!password){
+        setError("Please enter your password")
+        return
+    }
+    else{
+        setError('')
+    }
 
-      let email = input.email;
-      let password = input.password;
+    const userData = {
+        email,
+        password,
+    }
 
-      try {
+    try {
         const response  = await fetch('http://localhost:4000/api/auth/login', {
           method:'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            email,
-            password
-          }),
+          body: JSON.stringify({userData}),
         })
 
         const data = await response.json() 
@@ -57,17 +69,16 @@ const Login = () => {
           } 
           else {
             //Go to Dashboard
+            setError("Logged in!");
           }
         }
-        
-      } 
-      catch (error) {
-        console.log(error)
-      }
-    
+    } 
+    catch (error) {
+      console.log(error);
     }
-  
+    
   }
+
 
   return (
     <div>
@@ -76,7 +87,8 @@ const Login = () => {
         <div class="container-sm border shadow">
 
         {/* Error Statement */}
-        <span style={{color:'red',fontWeight:'bold'}}>{error}</span>
+        {/* <span style={{color:'red',fontWeight:'bold'}}>{error}</span> */}
+        {error && <span style={{color:'blue',fontWeight:'bold'}}>{error}</span>}
 
           <form onSubmit={handleSubmit}>
               <div class="form-row mt-3">

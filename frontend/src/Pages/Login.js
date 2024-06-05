@@ -3,6 +3,9 @@ import { useCookies } from "react-cookie";
 import { AuthContext } from "../Utils/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 
+// https://medium.com/@simonsruggi/how-to-implement-jwt-authentication-with-react-and-node-js-5d8bf3e718d0
+// https://github.com/koolkishan/login-signup-jwt-react-nodejs-mongodb/blob/master/public/src/pages/Login.jsx
+
 const Login = () => {
   //const [cookies] = useCookies([]);
   const navigate = useNavigate();

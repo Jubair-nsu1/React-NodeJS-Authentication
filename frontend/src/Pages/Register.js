@@ -36,12 +36,11 @@ const Register = () => {
       setError('Enter all fields*')
     } 
     else{ 
-
       const userData = {
         fullname,
         email,
         password,
-      }
+    }
 
       try {
         const response  = await fetch('http://localhost:4000/api/auth/register', {
@@ -49,7 +48,7 @@ const Register = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ userData}),
+          body: JSON.stringify(userData),
         })
 
         const data = await response.json() 

@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useCookies } from "react-cookie";
+import { AuthContext } from "../Utils/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [cookies] = useCookies([]);
+  //const [cookies] = useCookies([]);
   const navigate = useNavigate();
+ // const { setToken } = useContext(AuthContext);
 
-  useEffect(() => {
-    if (cookies.jwt) {
-      navigate("/dashboard");
-    }
-  }, [cookies, navigate]);
+  // useEffect(() => {
+  //   if (cookies.jwt) {
+  //     navigate("/dashboard");
+  //   }
+  // }, [cookies, navigate]);
 
   const [input, setInput] = useState({
     email: '',
@@ -25,7 +27,7 @@ const Login = () => {
     }));
   }
 
-  const [error, setError]     = useState(null);
+  const [error, setError] = useState(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -59,17 +61,21 @@ const Login = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({userData}),
+          body: JSON.stringify(userData),
         })
 
-        const data = await response.json() 
-        if (data) {
-          if (data.error) {
-            setError(data.error);
+        const resp = await response.json() 
+        if (resp) {
+          if (resp.error) {
+            setError(resp.error);
+            //setToken(null);
+            localStorage.removeItem("token");
           } 
           else {
             //Go to Dashboard
-            setError("Logged in!");
+            //setToken(resp.data.token);
+            localStorage.setItem("token", resp.data.token);
+            navigate("/dashboard");
           }
         }
     } 
